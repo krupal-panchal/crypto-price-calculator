@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="icon" href="https://cryptologos.cc/logos/bitcoin-btc-logo.png" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Crypto Position Calculator</title>
+	<style>
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+			background: #f0f2f5;
+			color: #1a1a1a;
+			min-height: 100vh;
+		}
+
+		.app-header {
+			background: #fff;
+			border-bottom: 1px solid #e2e5ea;
+			padding: 0 32px;
+			display: flex;
+			align-items: center;
+			gap: 0;
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+		}
+
+		.brand {
+			font-size: 18px;
+			font-weight: 700;
+			color: #f7931a;
+			padding: 18px 0;
+			margin-right: 36px;
+			letter-spacing: -0.3px;
+		}
+
+		.tabs {
+			display: flex;
+			gap: 0;
+		}
+
+		.tab {
+			padding: 18px 22px;
+			font-size: 15px;
+			font-weight: 500;
+			cursor: pointer;
+			border-bottom: 2px solid transparent;
+			color: #888;
+			transition: all 0.15s;
+		}
+
+		.tab.active-btc {
+			color: #f7931a;
+			border-bottom-color: #f7931a;
+		}
+
+		.tab.active-eth {
+			color: #627eea;
+			border-bottom-color: #627eea;
+		}
+
+		.tab.active-sol {
+			color: #9945ff;
+			border-bottom-color: #9945ff;
+		}
+
+		.tab:not(.active-btc):not(.active-eth):not(.active-sol):hover {
+			color: #444;
+		}
+
+		.content {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 32px 28px;
+		}
+
+		.section-title {
+			font-size: 13px;
+			font-weight: 700;
+			color: #888;
+			letter-spacing: 0.07em;
+			text-transform: uppercase;
+			margin-bottom: 14px;
+		}
+
+		.controls-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 18px;
+			margin-bottom: 28px;
+		}
+
+		.control-card {
+			background: #fff;
+			border: 1px solid #e2e5ea;
+			border-radius: 14px;
+			padding: 20px 22px;
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+		}
+
+		.control-label {
+			font-size: 13px;
+			color: #888;
+			margin-bottom: 8px;
+			font-weight: 600;
+		}
+
+		.control-value-btc {
+			font-size: 30px;
+			font-weight: 700;
+			color: #f7931a;
+			line-height: 1;
+			margin-bottom: 14px;
+		}
+
+		.control-value-eth {
+			font-size: 30px;
+			font-weight: 700;
+			color: #627eea;
+			line-height: 1;
+			margin-bottom: 14px;
+		}
+
+		.control-value-sol {
+			font-size: 30px;
+			font-weight: 700;
+			color: #9945ff;
+			line-height: 1;
+			margin-bottom: 14px;
+		}
+
+		.control-value-btc span,
+		.control-value-eth span,
+		.control-value-sol span {
+			font-size: 15px;
+			color: #aaa;
+			font-weight: 400;
+			margin-left: 6px;
+		}
+
+		input[type=range] {
+			-webkit-appearance: none;
+			width: 100%;
+			height: 4px;
+			border-radius: 2px;
+			background: #e2e5ea;
+			outline: none;
+		}
+
+		input[type=range].btc-range::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			background: #f7931a;
+			cursor: pointer;
+			box-shadow: 0 1px 4px rgba(247, 147, 26, 0.4);
+		}
+
+		input[type=range].eth-range::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			background: #627eea;
+			cursor: pointer;
+			box-shadow: 0 1px 4px rgba(98, 126, 234, 0.4);
+		}
+
+		input[type=range].sol-range::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			background: #9945ff;
+			cursor: pointer;
+			box-shadow: 0 1px 4px rgba(153, 69, 255, 0.4);
+		}
+
+		.range-labels {
+			display: flex;
+			justify-content: space-between;
+			font-size: 12px;
+			color: #aaa;
+			margin-top: 8px;
+		}
+
+		.pill {
+			padding: 8px 18px;
+			border-radius: 20px;
+			border: 1.5px solid #e2e5ea;
+			background: #f7f8fa;
+			color: #888;
+			font-size: 14px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.15s;
+		}
+
+		.pill:hover {
+			border-color: #bbb;
+			color: #444;
+			background: #eee;
+		}
+
+		.pill.active-btc {
+			background: #fff4e8;
+			border-color: #f7931a;
+			color: #c8720d;
+			font-weight: 600;
+		}
+
+		.pill.active-eth {
+			background: #eef0fd;
+			border-color: #627eea;
+			color: #3d5bd4;
+			font-weight: 600;
+		}
+
+		.pill.active-sol {
+			background: #f3eeff;
+			border-color: #9945ff;
+			color: #7122d4;
+			font-weight: 600;
+		}
+
+		.leverage-pills {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+		}
+
+		.sl-pills {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+		}
+
+		.metrics-row {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 14px;
+			margin-bottom: 28px;
+		}
+
+		.metric {
+			background: #fff;
+			border: 1px solid #e2e5ea;
+			border-radius: 14px;
+			padding: 18px 20px;
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+		}
+
+		.metric-label {
+			font-size: 12px;
+			color: #999;
+			margin-bottom: 7px;
+			font-weight: 600;
+			letter-spacing: 0.03em;
+			text-transform: uppercase;
+		}
+
+		.metric-value {
+			font-size: 24px;
+			font-weight: 700;
+			line-height: 1;
+		}
+
+		.metric-value.green {
+			color: #16a34a;
+		}
+
+		.metric-value.red {
+			color: #dc2626;
+		}
+
+		.metric-value.orange {
+			color: #ea8010;
+		}
+
+		.metric-value.blue {
+			color: #2563eb;
+		}
+
+		.metric-value.eth-blue {
+			color: #627eea;
+		}
+
+		.metric-value.sol-purple {
+			color: #9945ff;
+		}
+
+		.metric-sub {
+			font-size: 13px;
+			color: #bbb;
+			margin-top: 5px;
+		}
+
+		.table-section {
+			background: #fff;
+			border: 1px solid #e2e5ea;
+			border-radius: 14px;
+			overflow: hidden;
+			margin-bottom: 28px;
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 15px;
+		}
+
+		th {
+			padding: 12px 18px;
+			text-align: right;
+			font-size: 12px;
+			font-weight: 700;
+			letter-spacing: 0.05em;
+			color: #aaa;
+			text-transform: uppercase;
+			border-bottom: 1px solid #eee;
+			background: #fafbfc;
+		}
+
+		th:first-child {
+			text-align: left;
+		}
+
+		td {
+			padding: 11px 18px;
+			text-align: right;
+			border-bottom: 1px solid #f0f2f5;
+			color: #333;
+		}
+
+		td:first-child {
+			text-align: left;
+			color: #555;
+			font-weight: 600;
+		}
+
+		tr:last-child td {
+			border-bottom: none;
+		}
+
+		tr:hover td {
+			background: #fafbfc;
+		}
+
+		tr.hl-btc td {
+			background: #fff8f0;
+		}
+
+		tr.hl-btc td:first-child {
+			color: #d97706;
+		}
+
+		tr.hl-eth td {
+			background: #f0f3ff;
+		}
+
+		tr.hl-eth td:first-child {
+			color: #4f6fd4;
+		}
+
+		tr.hl-sol td {
+			background: #f5f0ff;
+		}
+
+		tr.hl-sol td:first-child {
+			color: #7c3aed;
+		}
+
+		.td-green {
+			color: #16a34a !important;
+			font-weight: 600;
+		}
+
+		.td-red {
+			color: #dc2626 !important;
+			font-weight: 600;
+		}
+
+		.td-orange {
+			color: #ea8010 !important;
+			font-weight: 600;
+		}
+
+		.td-ethblue {
+			color: #4f6fd4 !important;
+			font-weight: 600;
+		}
+
+		.td-solpurple {
+			color: #7c3aed !important;
+			font-weight: 600;
+		}
+
+		.two-col {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 18px;
+		}
+
+		.info-chip {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			background: #fff;
+			border: 1px solid #e2e5ea;
+			border-radius: 8px;
+			padding: 6px 12px;
+			font-size: 13px;
+			color: #888;
+			margin-bottom: 22px;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+		}
+
+		.info-chip span.btc-c {
+			color: #f7931a;
+			font-weight: 700;
+		}
+
+		.info-chip span.eth-c {
+			color: #627eea;
+			font-weight: 700;
+		}
+
+		.info-chip span.sol-c {
+			color: #9945ff;
+			font-weight: 700;
+		}
+
+		.divider {
+			height: 1px;
+			background: #e8eaed;
+			margin: 26px 0;
+		}
+
+		/* ── TABLE SCROLL WRAPPER ── */
+		.table-scroll {
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.table-scroll table {
+			min-width: 520px;
+		}
+
+		/* ════════════════════════════
+     MOBILE  ≤ 640px
+  ════════════════════════════ */
+		@media (max-width: 640px) {
+
+			/* Header */
+			.app-header {
+				padding: 0 14px;
+				flex-wrap: wrap;
+				position: sticky;
+				top: 0;
+				z-index: 100;
+			}
+
+			.brand {
+				font-size: 15px;
+				padding: 12px 0;
+				margin-right: 16px;
+			}
+
+			.tabs {
+				flex: 1;
+				overflow-x: auto;
+				-webkit-overflow-scrolling: touch;
+				scrollbar-width: none;
+			}
+
+			.tabs::-webkit-scrollbar {
+				display: none;
+			}
+
+			.tab {
+				padding: 12px 14px;
+				font-size: 13px;
+				white-space: nowrap;
+			}
+
+			/* Content */
+			.content {
+				padding: 16px 14px;
+			}
+
+			.section-title {
+				font-size: 11px;
+				margin-bottom: 10px;
+			}
+
+			/* Info chip — wrap onto multiple lines */
+			.info-chip {
+				flex-wrap: wrap;
+				font-size: 12px;
+				gap: 4px;
+			}
+
+			/* Controls — stack vertically */
+			.controls-grid {
+				grid-template-columns: 1fr;
+				gap: 12px;
+				margin-bottom: 20px;
+			}
+
+			.control-card {
+				padding: 16px;
+			}
+
+			.control-value-btc,
+			.control-value-eth,
+			.control-value-sol {
+				font-size: 24px;
+				margin-bottom: 12px;
+			}
+
+			.control-value-btc span,
+			.control-value-eth span,
+			.control-value-sol span {
+				font-size: 13px;
+			}
+
+			.range-labels {
+				font-size: 10px;
+			}
+
+			.pill {
+				padding: 9px 14px;
+				font-size: 13px;
+			}
+
+			/* Metrics — 2×2 grid on mobile */
+			.metrics-row {
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+				margin-bottom: 20px;
+			}
+
+			.metric {
+				padding: 14px;
+				border-radius: 12px;
+			}
+
+			.metric-label {
+				font-size: 10px;
+				margin-bottom: 5px;
+			}
+
+			.metric-value {
+				font-size: 19px;
+			}
+
+			.metric-sub {
+				font-size: 11px;
+			}
+
+			/* Two-col tables — stack vertically */
+			.two-col {
+				grid-template-columns: 1fr;
+				gap: 12px;
+			}
+
+			/* Tables — horizontal scroll */
+			.table-section {
+				border-radius: 12px;
+			}
+
+			.table-scroll {
+				border-radius: 12px;
+			}
+
+			table {
+				font-size: 13px;
+			}
+
+			th {
+				padding: 9px 12px;
+				font-size: 10px;
+			}
+
+			td {
+				padding: 9px 12px;
+			}
+
+			/* Divider */
+			.divider {
+				margin: 18px 0;
+			}
+		}
+
+		/* ════════════════════════════
+     TABLET  641px – 900px
+  ════════════════════════════ */
+		@media (min-width: 641px) and (max-width: 900px) {
+			.content {
+				padding: 24px 20px;
+			}
+
+			.metrics-row {
+				grid-template-columns: repeat(2, 1fr);
+				gap: 12px;
+			}
+
+			.metric-value {
+				font-size: 21px;
+			}
+
+			.two-col {
+				grid-template-columns: 1fr;
+				gap: 16px;
+			}
+
+			table {
+				font-size: 14px;
+			}
+
+			th {
+				padding: 10px 14px;
+			}
+
+			td {
+				padding: 10px 14px;
+			}
+
+			.table-scroll {
+				overflow-x: auto;
+				-webkit-overflow-scrolling: touch;
+			}
+
+			.table-scroll table {
+				min-width: 480px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="app-header">
+		<div class="brand">⚡ CryptoCalc</div>
+		<div class="tabs">
+			<div class="tab active-btc" id="tab-btc" onclick="showTab('btc')">BTC / USDT</div>
+			<div class="tab" id="tab-eth" onclick="showTab('eth')">ETH / USDT</div>
+			<div class="tab" id="tab-sol" onclick="showTab('sol')">SOL / USDT</div>
+		</div>
+	</div>
+
+	<!-- ═══════════════ BTC PANEL ═══════════════ -->
+	<div id="btc-panel" class="content">
+		<div class="info-chip">
+			1 USD = <span class="btc-c">85 INR</span> &nbsp;·&nbsp; 1 lot = <span class="btc-c">0.001 BTC</span>
+			&nbsp;·&nbsp; 10 lots = <span class="btc-c">0.01 BTC</span> &nbsp;·&nbsp; 100 pts = <span class="btc-c">$1
+				P&amp;L per 10 lots</span>
+		</div>
+		<div class="controls-grid">
+			<div class="control-card">
+				<div class="control-label">Lot Size</div>
+				<div class="control-value-btc" id="b-lot-display">10 <span>lots (0.01 BTC)</span></div>
+				<input type="range" class="btc-range" id="b-lot-slider" min="1" max="10" value="1" step="1"
+					oninput="btcUpdate()">
+				<div class="range-labels">
+					<span>10</span><span>20</span><span>30</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span><span>100</span>
+				</div>
+			</div>
+			<div class="control-card">
+				<div class="control-label">Leverage</div>
+				<div class="leverage-pills" id="b-lev-pills">
+					<div class="pill active-btc" onclick="btcSetLev(25,this)">25x</div>
+					<div class="pill" onclick="btcSetLev(50,this)">50x</div>
+					<div class="pill" onclick="btcSetLev(100,this)">100x</div>
+				</div>
+				<div style="margin-top:14px;">
+					<div class="control-label">Stop Loss Target</div>
+					<div class="sl-pills" id="b-sl-pills">
+						<div class="pill active-btc" onclick="btcSetSL(200,this)">200 pts</div>
+						<div class="pill" onclick="btcSetSL(300,this)">300 pts</div>
+						<div class="pill" onclick="btcSetSL(400,this)">400 pts</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<p class="section-title">Trade Summary</p>
+		<div class="metrics-row">
+			<div class="metric">
+				<div class="metric-label">Margin Required</div>
+				<div class="metric-value blue" id="b-m-margin">—</div>
+				<div class="metric-sub" id="b-m-margin-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Max Loss (SL hit)</div>
+				<div class="metric-value red" id="b-m-loss">—</div>
+				<div class="metric-sub" id="b-m-loss-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Target Profit (1:2 RR)</div>
+				<div class="metric-value green" id="b-m-profit">—</div>
+				<div class="metric-sub" id="b-m-profit-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Profit per 100 pts</div>
+				<div class="metric-value orange" id="b-m-per100">—</div>
+				<div class="metric-sub" id="b-m-per100-inr">—</div>
+			</div>
+		</div>
+		<div class="two-col">
+			<div>
+				<p class="section-title">Lot Size vs Margin (All Leverages)</p>
+				<div class="table-section">
+					<div class="table-scroll">
+						<table>
+							<thead>
+								<tr>
+									<th>Lots</th>
+									<th>BTC</th>
+									<th>25x ($)</th>
+									<th>50x ($)</th>
+									<th>100x ($)</th>
+								</tr>
+							</thead>
+							<tbody id="b-margin-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div>
+				<p class="section-title">SL / TP at Current Lots</p>
+				<div class="table-section">
+					<div class="table-scroll">
+						<table>
+							<thead>
+								<tr>
+									<th>SL pts</th>
+									<th>Loss ($)</th>
+									<th>Loss (₹)</th>
+									<th>TP ($)</th>
+									<th>TP (₹)</th>
+								</tr>
+							</thead>
+							<tbody id="b-sltp-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="divider"></div>
+		<p class="section-title">Profit / Loss by Point Movement (Current Lots)</p>
+		<div class="table-section">
+			<div class="table-scroll">
+				<table>
+					<thead>
+						<tr>
+							<th>Points</th>
+							<th>P&amp;L ($)</th>
+							<th>P&amp;L (₹)</th>
+							<th>25x Margin</th>
+							<th>ROI 25x</th>
+							<th>50x Margin</th>
+							<th>ROI 50x</th>
+							<th>100x Margin</th>
+							<th>ROI 100x</th>
+						</tr>
+					</thead>
+					<tbody id="b-pnl-table"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- ═══════════════ ETH PANEL ═══════════════ -->
+	<div id="eth-panel" class="content" style="display:none;">
+		<div class="info-chip">
+			1 USD = <span class="eth-c">85 INR</span> &nbsp;·&nbsp; 1 lot = <span class="eth-c">0.01 ETH</span>
+			&nbsp;·&nbsp; 10 lots = <span class="eth-c">0.1 ETH</span> &nbsp;·&nbsp; 10 pts = <span class="eth-c">$1
+				P&amp;L per 10 lots</span>
+		</div>
+		<div class="controls-grid">
+			<div class="control-card">
+				<div class="control-label">Lot Size</div>
+				<div class="control-value-eth" id="e-lot-display">10 <span>lots (0.1 ETH)</span></div>
+				<input type="range" class="eth-range" id="e-lot-slider" min="1" max="5" value="1" step="1"
+					oninput="ethUpdate()">
+				<div class="range-labels">
+					<span>10</span><span>50</span><span>100</span><span>500</span><span>1000</span></div>
+			</div>
+			<div class="control-card">
+				<div class="control-label">Leverage</div>
+				<div class="leverage-pills" id="e-lev-pills">
+					<div class="pill active-eth" onclick="ethSetLev(25,this)">25x</div>
+					<div class="pill" onclick="ethSetLev(50,this)">50x</div>
+					<div class="pill" onclick="ethSetLev(100,this)">100x</div>
+				</div>
+				<div style="margin-top:14px;">
+					<div class="control-label">Stop Loss Target</div>
+					<div class="sl-pills" id="e-sl-pills">
+						<div class="pill active-eth" onclick="ethSetSL(20,this)">20 pts</div>
+						<div class="pill" onclick="ethSetSL(30,this)">30 pts</div>
+						<div class="pill" onclick="ethSetSL(40,this)">40 pts</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<p class="section-title">Trade Summary</p>
+		<div class="metrics-row">
+			<div class="metric">
+				<div class="metric-label">Margin Required</div>
+				<div class="metric-value eth-blue" id="e-m-margin">—</div>
+				<div class="metric-sub" id="e-m-margin-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Max Loss (SL hit)</div>
+				<div class="metric-value red" id="e-m-loss">—</div>
+				<div class="metric-sub" id="e-m-loss-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Target Profit (1:2 RR)</div>
+				<div class="metric-value green" id="e-m-profit">—</div>
+				<div class="metric-sub" id="e-m-profit-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Profit per 10 pts</div>
+				<div class="metric-value eth-blue" id="e-m-per10">—</div>
+				<div class="metric-sub" id="e-m-per10-inr">—</div>
+			</div>
+		</div>
+		<div class="two-col">
+			<div>
+				<p class="section-title">Lot Size vs Margin (All Leverages)</p>
+				<div class="table-section">
+					<div class="table-scroll">
+						<table>
+							<thead>
+								<tr>
+									<th>Lots</th>
+									<th>ETH</th>
+									<th>25x ($)</th>
+									<th>50x ($)</th>
+									<th>100x ($)</th>
+								</tr>
+							</thead>
+							<tbody id="e-margin-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div>
+				<p class="section-title">SL / TP at Current Lots</p>
+				<div class="table-section">
+					<div class="table-scroll">
+						<table>
+							<thead>
+								<tr>
+									<th>SL pts</th>
+									<th>Loss ($)</th>
+									<th>Loss (₹)</th>
+									<th>TP ($)</th>
+									<th>TP (₹)</th>
+								</tr>
+							</thead>
+							<tbody id="e-sltp-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="divider"></div>
+		<p class="section-title">Profit / Loss by Point Movement (Current Lots)</p>
+		<div class="table-section">
+			<div class="table-scroll">
+				<table>
+					<thead>
+						<tr>
+							<th>Points</th>
+							<th>P&amp;L ($)</th>
+							<th>P&amp;L (₹)</th>
+							<th>25x Margin</th>
+							<th>ROI 25x</th>
+							<th>50x Margin</th>
+							<th>ROI 50x</th>
+							<th>100x Margin</th>
+							<th>ROI 100x</th>
+						</tr>
+					</thead>
+					<tbody id="e-pnl-table"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- ═══════════════ SOL PANEL ═══════════════ -->
+	<div id="sol-panel" class="content" style="display:none;">
+		<div class="info-chip">
+			1 USD = <span class="sol-c">85 INR</span> &nbsp;·&nbsp; 1 lot = <span class="sol-c">1 SOL</span>
+			&nbsp;·&nbsp; 1 pt move = <span class="sol-c">$1 P&amp;L per 1 lot</span>
+		</div>
+		<div class="controls-grid">
+			<div class="control-card">
+				<div class="control-label">Lot Size</div>
+				<div class="control-value-sol" id="s-lot-display">1 <span>lot (1 SOL)</span></div>
+				<input type="range" class="sol-range" id="s-lot-slider" min="1" max="5" value="1" step="1"
+					oninput="solUpdate()">
+				<div class="range-labels"><span>1</span><span>5</span><span>10</span><span>50</span><span>100</span>
+				</div>
+			</div>
+			<div class="control-card">
+				<div class="control-label">Leverage</div>
+				<div class="leverage-pills" id="s-lev-pills">
+					<div class="pill active-sol" onclick="solSetLev(25,this)">25x</div>
+					<div class="pill" onclick="solSetLev(50,this)">50x</div>
+					<div class="pill" onclick="solSetLev(100,this)">100x</div>
+				</div>
+				<div style="margin-top:14px;">
+					<div class="control-label">Stop Loss Target</div>
+					<div class="sl-pills" id="s-sl-pills">
+						<div class="pill active-sol" onclick="solSetSL(2,this)">2 pts</div>
+						<div class="pill" onclick="solSetSL(3,this)">3 pts</div>
+						<div class="pill" onclick="solSetSL(4,this)">4 pts</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<p class="section-title">Trade Summary</p>
+		<div class="metrics-row">
+			<div class="metric">
+				<div class="metric-label">Margin Required</div>
+				<div class="metric-value sol-purple" id="s-m-margin">—</div>
+				<div class="metric-sub" id="s-m-margin-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Max Loss (SL hit)</div>
+				<div class="metric-value red" id="s-m-loss">—</div>
+				<div class="metric-sub" id="s-m-loss-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Target Profit (1:2 RR)</div>
+				<div class="metric-value green" id="s-m-profit">—</div>
+				<div class="metric-sub" id="s-m-profit-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Profit per 1 pt</div>
+				<div class="metric-value sol-purple" id="s-m-per1">—</div>
+				<div class="metric-sub" id="s-m-per1-inr">—</div>
+			</div>
+		</div>
+		<div class="two-col">
+			<div>
+				<p class="section-title">Lot Size vs Margin (All Leverages)</p>
+				<div class="table-section">
+					<div class="table-scroll">
+						<table>
+							<thead>
+								<tr>
+									<th>Lots</th>
+									<th>SOL</th>
+									<th>25x ($)</th>
+									<th>50x ($)</th>
+									<th>100x ($)</th>
+								</tr>
+							</thead>
+							<tbody id="s-margin-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div>
+				<p class="section-title">SL / TP at Current Lots</p>
+				<div class="table-section">
+					<div class="table-scroll">
+						<table>
+							<thead>
+								<tr>
+									<th>SL pts</th>
+									<th>Loss ($)</th>
+									<th>Loss (₹)</th>
+									<th>TP ($)</th>
+									<th>TP (₹)</th>
+								</tr>
+							</thead>
+							<tbody id="s-sltp-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="divider"></div>
+		<p class="section-title">Profit / Loss by Point Movement (Current Lots)</p>
+		<div class="table-section">
+			<div class="table-scroll">
+				<table>
+					<thead>
+						<tr>
+							<th>Points</th>
+							<th>P&amp;L ($)</th>
+							<th>P&amp;L (₹)</th>
+							<th>25x Margin</th>
+							<th>ROI 25x</th>
+							<th>50x Margin</th>
+							<th>ROI 50x</th>
+							<th>100x Margin</th>
+							<th>ROI 100x</th>
+						</tr>
+					</thead>
+					<tbody id="s-pnl-table"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const INR = 85;
+
+		/* ── BTC ── */
+		let bLots = 10, bLev = 25, bSL = 200;
+		const BTC_STEPS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+
+		/* ── ETH ── */
+		let eLots = 10, eLev = 25, eSL = 20;
+		const ETH_STEPS = [10, 50, 100, 500, 1000];
+
+		/* ── SOL ── */
+		let sLots = 1, sLev = 25, sSL = 2;
+		const SOL_STEPS = [1, 5, 10, 50, 100];
+
+		/* ── helpers ── */
+		function fmt(v) { return '$' + v.toFixed(2); }
+		function fmtINR(v) { return '₹' + (v * INR).toFixed(0); }
+		function pct(v) { return (v * 100).toFixed(1) + '%'; }
+
+		/* ── TAB ── */
+		function showTab(coin) {
+			['btc', 'eth', 'sol'].forEach(c => {
+				document.getElementById(c + '-panel').style.display = c === coin ? 'block' : 'none';
+				document.getElementById('tab-' + c).className = 'tab' + (c === coin ? ' active-' + c : '');
+			});
+		}
+
+		/* ════ BTC ════ */
+		function btcSetLev(l, el) { bLev = l; document.querySelectorAll('#b-lev-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-btc'; btcUpdate(); }
+		function btcSetSL(s, el) { bSL = s; document.querySelectorAll('#b-sl-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-btc'; btcUpdate(); }
+		function btcMargin(lots, lev) { const m = lots / 10; return lev === 25 ? 28 * m : lev === 50 ? 14 * m : 7 * m; }
+		function btcPnL(lots, pts) { return (lots / 10) * (pts / 100); }
+
+		function btcUpdate() {
+			bLots = BTC_STEPS[parseInt(document.getElementById('b-lot-slider').value) - 1];
+			document.getElementById('b-lot-display').innerHTML = bLots + ' <span>lots (' + (bLots * 0.001).toFixed(3) + ' BTC)</span>';
+			const mg = btcMargin(bLots, bLev), lo = btcPnL(bLots, bSL), pr = lo * 2, p100 = btcPnL(bLots, 100);
+			document.getElementById('b-m-margin').textContent = fmt(mg);
+			document.getElementById('b-m-margin-inr').textContent = fmtINR(mg);
+			document.getElementById('b-m-loss').textContent = '-' + fmt(lo);
+			document.getElementById('b-m-loss-inr').textContent = '-' + fmtINR(lo);
+			document.getElementById('b-m-profit').textContent = '+' + fmt(pr);
+			document.getElementById('b-m-profit-inr').textContent = '+' + fmtINR(pr);
+			document.getElementById('b-m-per100').textContent = fmt(p100);
+			document.getElementById('b-m-per100-inr').textContent = fmtINR(p100);
+			let h = '';
+			BTC_STEPS.forEach(l => { h += `<tr class="${l === bLots ? 'hl-btc' : ''}"><td>${l}</td><td>${(l * 0.001).toFixed(3)}</td><td>${fmt(btcMargin(l, 25))}</td><td>${fmt(btcMargin(l, 50))}</td><td>${fmt(btcMargin(l, 100))}</td></tr>`; });
+			document.getElementById('b-margin-table').innerHTML = h;
+			h = '';
+			[200, 300, 400].forEach(s => { const lo = btcPnL(bLots, s), tp = lo * 2; h += `<tr class="${s === bSL ? 'hl-btc' : ''}"><td>${s}</td><td class="td-red">-${fmt(lo)}</td><td class="td-red">-${fmtINR(lo)}</td><td class="td-green">+${fmt(tp)}</td><td class="td-green">+${fmtINR(tp)}</td></tr>`; });
+			document.getElementById('b-sltp-table').innerHTML = h;
+			h = '';
+			[50, 100, 250, 500, 1000].forEach(p => { const pnl = btcPnL(bLots, p), m25 = btcMargin(bLots, 25), m50 = btcMargin(bLots, 50), m100 = btcMargin(bLots, 100); h += `<tr><td>${p} pts</td><td class="td-green">+${fmt(pnl)}</td><td class="td-green">+${fmtINR(pnl)}</td><td>${fmt(m25)}</td><td class="td-orange">${pct(pnl / m25)}</td><td>${fmt(m50)}</td><td class="td-orange">${pct(pnl / m50)}</td><td>${fmt(m100)}</td><td class="td-orange">${pct(pnl / m100)}</td></tr>`; });
+			document.getElementById('b-pnl-table').innerHTML = h;
+		}
+
+		/* ════ ETH ════ */
+		function ethSetLev(l, el) { eLev = l; document.querySelectorAll('#e-lev-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-eth'; ethUpdate(); }
+		function ethSetSL(s, el) { eSL = s; document.querySelectorAll('#e-sl-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-eth'; ethUpdate(); }
+		function ethMargin(lots, lev) { const m = lots / 10; return lev === 25 ? 8 * m : lev === 50 ? 4 * m : 2 * m; }
+		function ethPnL(lots, pts) { return (lots / 10) * (pts / 10); }
+
+		function ethUpdate() {
+			eLots = ETH_STEPS[parseInt(document.getElementById('e-lot-slider').value) - 1];
+			document.getElementById('e-lot-display').innerHTML = eLots + ' <span>lots (' + (eLots * 0.01).toFixed(2) + ' ETH)</span>';
+			const mg = ethMargin(eLots, eLev), lo = ethPnL(eLots, eSL), pr = lo * 2, p10 = ethPnL(eLots, 10);
+			document.getElementById('e-m-margin').textContent = fmt(mg);
+			document.getElementById('e-m-margin-inr').textContent = fmtINR(mg);
+			document.getElementById('e-m-loss').textContent = '-' + fmt(lo);
+			document.getElementById('e-m-loss-inr').textContent = '-' + fmtINR(lo);
+			document.getElementById('e-m-profit').textContent = '+' + fmt(pr);
+			document.getElementById('e-m-profit-inr').textContent = '+' + fmtINR(pr);
+			document.getElementById('e-m-per10').textContent = fmt(p10);
+			document.getElementById('e-m-per10-inr').textContent = fmtINR(p10);
+			let h = '';
+			ETH_STEPS.forEach(l => { h += `<tr class="${l === eLots ? 'hl-eth' : ''}"><td>${l}</td><td>${(l * 0.01).toFixed(2)}</td><td>${fmt(ethMargin(l, 25))}</td><td>${fmt(ethMargin(l, 50))}</td><td>${fmt(ethMargin(l, 100))}</td></tr>`; });
+			document.getElementById('e-margin-table').innerHTML = h;
+			h = '';
+			[20, 30, 40].forEach(s => { const lo = ethPnL(eLots, s), tp = lo * 2; h += `<tr class="${s === eSL ? 'hl-eth' : ''}"><td>${s}</td><td class="td-red">-${fmt(lo)}</td><td class="td-red">-${fmtINR(lo)}</td><td class="td-green">+${fmt(tp)}</td><td class="td-green">+${fmtINR(tp)}</td></tr>`; });
+			document.getElementById('e-sltp-table').innerHTML = h;
+			h = '';
+			[10, 20, 50, 100, 200].forEach(p => { const pnl = ethPnL(eLots, p), m25 = ethMargin(eLots, 25), m50 = ethMargin(eLots, 50), m100 = ethMargin(eLots, 100); h += `<tr><td>${p} pts</td><td class="td-green">+${fmt(pnl)}</td><td class="td-green">+${fmtINR(pnl)}</td><td>${fmt(m25)}</td><td class="td-ethblue">${pct(pnl / m25)}</td><td>${fmt(m50)}</td><td class="td-ethblue">${pct(pnl / m50)}</td><td>${fmt(m100)}</td><td class="td-ethblue">${pct(pnl / m100)}</td></tr>`; });
+			document.getElementById('e-pnl-table').innerHTML = h;
+		}
+
+		/* ════ SOL ════ */
+		function solSetLev(l, el) { sLev = l; document.querySelectorAll('#s-lev-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-sol'; solUpdate(); }
+		function solSetSL(s, el) { sSL = s; document.querySelectorAll('#s-sl-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-sol'; solUpdate(); }
+		/* SOL: 1 lot × 1 pt = $1  →  pnl = lots × pts */
+		function solMargin(lots, lev) { return lev === 25 ? 3 * lots : lev === 50 ? 1.5 * lots : 0.82 * lots; }
+		function solPnL(lots, pts) { return lots * pts; }
+
+		function solUpdate() {
+			sLots = SOL_STEPS[parseInt(document.getElementById('s-lot-slider').value) - 1];
+			document.getElementById('s-lot-display').innerHTML = sLots + ' <span>lot' + (sLots > 1 ? 's' : '') + ' (' + sLots + ' SOL)</span>';
+			const mg = solMargin(sLots, sLev), lo = solPnL(sLots, sSL), pr = lo * 2, p1 = solPnL(sLots, 1);
+			document.getElementById('s-m-margin').textContent = fmt(mg);
+			document.getElementById('s-m-margin-inr').textContent = fmtINR(mg);
+			document.getElementById('s-m-loss').textContent = '-' + fmt(lo);
+			document.getElementById('s-m-loss-inr').textContent = '-' + fmtINR(lo);
+			document.getElementById('s-m-profit').textContent = '+' + fmt(pr);
+			document.getElementById('s-m-profit-inr').textContent = '+' + fmtINR(pr);
+			document.getElementById('s-m-per1').textContent = fmt(p1);
+			document.getElementById('s-m-per1-inr').textContent = fmtINR(p1);
+			let h = '';
+			SOL_STEPS.forEach(l => { h += `<tr class="${l === sLots ? 'hl-sol' : ''}"><td>${l}</td><td>${l} SOL</td><td>${fmt(solMargin(l, 25))}</td><td>${fmt(solMargin(l, 50))}</td><td>${fmt(solMargin(l, 100))}</td></tr>`; });
+			document.getElementById('s-margin-table').innerHTML = h;
+			h = '';
+			[2, 3, 4].forEach(s => { const lo = solPnL(sLots, s), tp = lo * 2; h += `<tr class="${s === sSL ? 'hl-sol' : ''}"><td>${s}</td><td class="td-red">-${fmt(lo)}</td><td class="td-red">-${fmtINR(lo)}</td><td class="td-green">+${fmt(tp)}</td><td class="td-green">+${fmtINR(tp)}</td></tr>`; });
+			document.getElementById('s-sltp-table').innerHTML = h;
+			h = '';
+			[1, 2, 5, 10, 20].forEach(p => { const pnl = solPnL(sLots, p), m25 = solMargin(sLots, 25), m50 = solMargin(sLots, 50), m100 = solMargin(sLots, 100); h += `<tr><td>${p} pt${p > 1 ? 's' : ''}</td><td class="td-green">+${fmt(pnl)}</td><td class="td-green">+${fmtINR(pnl)}</td><td>${fmt(m25)}</td><td class="td-solpurple">${pct(pnl / m25)}</td><td>${fmt(m50)}</td><td class="td-solpurple">${pct(pnl / m50)}</td><td>${fmt(m100)}</td><td class="td-solpurple">${pct(pnl / m100)}</td></tr>`; });
+			document.getElementById('s-pnl-table').innerHTML = h;
+		}
+
+		/* init */
+		btcUpdate();
+		ethUpdate();
+		solUpdate();
+	</script>
+</body>
+
+</html>

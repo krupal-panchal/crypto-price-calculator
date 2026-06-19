@@ -305,15 +305,21 @@
 			background: #fff;
 			border: 1px solid #e2e5ea;
 			border-radius: 14px;
-			overflow: hidden;
 			margin-bottom: 28px;
 			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+		}
+
+		.table-scroll {
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+			border-radius: 14px;
 		}
 
 		table {
 			width: 100%;
 			border-collapse: collapse;
 			font-size: 15px;
+			min-width: 340px;
 		}
 
 		th {
@@ -444,11 +450,6 @@
 		}
 
 		/* ── TABLE SCROLL WRAPPER ── */
-		.table-scroll {
-			overflow-x: auto;
-			-webkit-overflow-scrolling: touch;
-		}
-
 		.table-scroll table {
 			min-width: 520px;
 		}
@@ -578,6 +579,12 @@
 
 			.table-scroll {
 				border-radius: 12px;
+				overflow-x: auto;
+				-webkit-overflow-scrolling: touch;
+			}
+
+			.table-scroll table {
+				min-width: 360px;
 			}
 
 			table {
@@ -660,17 +667,18 @@
 	<div id="btc-panel" class="content">
 		<div class="info-chip">
 			1 USD = <span class="btc-c">85 INR</span> &nbsp;·&nbsp; 1 lot = <span class="btc-c">0.001 BTC</span>
-			&nbsp;·&nbsp; 10 lots = <span class="btc-c">0.01 BTC</span> &nbsp;·&nbsp; 100 pts = <span class="btc-c">$1
-				P&amp;L per 10 lots</span>
+			&nbsp;·&nbsp;
+			10 lots = <span class="btc-c">0.01 BTC</span> &nbsp;·&nbsp; 100 pts = <span class="btc-c">$1 P&amp;L per 10
+				lots</span>
 		</div>
 		<div class="controls-grid">
 			<div class="control-card">
 				<div class="control-label">Lot Size</div>
 				<div class="control-value-btc" id="b-lot-display">10 <span>lots (0.01 BTC)</span></div>
-				<input type="range" class="btc-range" id="b-lot-slider" min="1" max="10" value="1" step="1"
+				<input type="range" class="btc-range" id="b-lot-slider" min="1" max="13" value="1" step="1"
 					oninput="btcUpdate()">
 				<div class="range-labels">
-					<span>10</span><span>20</span><span>30</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span><span>100</span>
+					<span>10</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span><span>200</span><span>500</span><span>1000</span>
 				</div>
 			</div>
 			<div class="control-card">
@@ -781,17 +789,19 @@
 	<div id="eth-panel" class="content" style="display:none;">
 		<div class="info-chip">
 			1 USD = <span class="eth-c">85 INR</span> &nbsp;·&nbsp; 1 lot = <span class="eth-c">0.01 ETH</span>
-			&nbsp;·&nbsp; 10 lots = <span class="eth-c">0.1 ETH</span> &nbsp;·&nbsp; 10 pts = <span class="eth-c">$1
-				P&amp;L per 10 lots</span>
+			&nbsp;·&nbsp;
+			10 lots = <span class="eth-c">0.1 ETH</span> &nbsp;·&nbsp; 10 pts = <span class="eth-c">$1 P&amp;L per 10
+				lots</span>
 		</div>
 		<div class="controls-grid">
 			<div class="control-card">
 				<div class="control-label">Lot Size</div>
 				<div class="control-value-eth" id="e-lot-display">10 <span>lots (0.1 ETH)</span></div>
-				<input type="range" class="eth-range" id="e-lot-slider" min="1" max="5" value="1" step="1"
+				<input type="range" class="eth-range" id="e-lot-slider" min="1" max="8" value="1" step="1"
 					oninput="ethUpdate()">
 				<div class="range-labels">
-					<span>10</span><span>50</span><span>100</span><span>500</span><span>1000</span></div>
+					<span>10</span><span>50</span><span>100</span><span>500</span><span>1k</span><span>2k</span><span>5k</span><span>10k</span>
+				</div>
 			</div>
 			<div class="control-card">
 				<div class="control-label">Leverage</div>
@@ -901,15 +911,17 @@
 	<div id="sol-panel" class="content" style="display:none;">
 		<div class="info-chip">
 			1 USD = <span class="sol-c">85 INR</span> &nbsp;·&nbsp; 1 lot = <span class="sol-c">1 SOL</span>
-			&nbsp;·&nbsp; 1 pt move = <span class="sol-c">$1 P&amp;L per 1 lot</span>
+			&nbsp;·&nbsp; 1
+			pt move = <span class="sol-c">$1 P&amp;L per 1 lot</span>
 		</div>
 		<div class="controls-grid">
 			<div class="control-card">
 				<div class="control-label">Lot Size</div>
 				<div class="control-value-sol" id="s-lot-display">1 <span>lot (1 SOL)</span></div>
-				<input type="range" class="sol-range" id="s-lot-slider" min="1" max="5" value="1" step="1"
+				<input type="range" class="sol-range" id="s-lot-slider" min="1" max="7" value="1" step="1"
 					oninput="solUpdate()">
-				<div class="range-labels"><span>1</span><span>5</span><span>10</span><span>50</span><span>100</span>
+				<div class="range-labels">
+					<span>1</span><span>5</span><span>10</span><span>50</span><span>100</span><span>500</span><span>1000</span>
 				</div>
 			</div>
 			<div class="control-card">
@@ -1021,15 +1033,15 @@
 
 		/* ── BTC ── */
 		let bLots = 10, bLev = 25, bSL = 200;
-		const BTC_STEPS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+		const BTC_STEPS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000];
 
 		/* ── ETH ── */
 		let eLots = 10, eLev = 25, eSL = 20;
-		const ETH_STEPS = [10, 50, 100, 500, 1000];
+		const ETH_STEPS = [10, 50, 100, 500, 1000, 2000, 5000, 10000];
 
 		/* ── SOL ── */
 		let sLots = 1, sLev = 25, sSL = 2;
-		const SOL_STEPS = [1, 5, 10, 50, 100];
+		const SOL_STEPS = [1, 5, 10, 50, 100, 500, 1000];
 
 		/* ── helpers ── */
 		function fmt(v) { return '$' + v.toFixed(2); }

@@ -3,9 +3,9 @@
 
 <head>
 	<meta charset="UTF-8">
-	<link rel="icon" href="https://cryptologos.cc/logos/bitcoin-btc-logo.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Crypto Position Calculator</title>
+	<link rel="icon" href="https://cryptologos.cc/logos/bitcoin-btc-logo.png" />
 	<style>
 		* {
 			box-sizing: border-box;
@@ -92,6 +92,13 @@
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 			gap: 18px;
+			margin-bottom: 28px;
+		}
+
+		.controls-single {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 14px;
 			margin-bottom: 28px;
 		}
 
@@ -239,6 +246,53 @@
 			display: flex;
 			gap: 8px;
 			flex-wrap: wrap;
+		}
+
+		.lot-pills {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+			margin-top: 4px;
+		}
+
+		.lot-pill {
+			padding: 7px 14px;
+			border-radius: 20px;
+			border: 1.5px solid #e2e5ea;
+			background: #f7f8fa;
+			color: #666;
+			font-size: 13px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.15s;
+			white-space: nowrap;
+		}
+
+		.lot-pill:hover {
+			border-color: #bbb;
+			color: #333;
+			background: #eee;
+		}
+
+		.lot-pill.active-btc {
+			background: #fff4e8;
+			border-color: #f7931a;
+			color: #c8720d;
+			font-weight: 700;
+		}
+
+		.lot-pill.active-eth {
+			background: #eef0fd;
+			border-color: #627eea;
+			color: #3d5bd4;
+			font-weight: 700;
+		}
+
+		.lot-pill.active-sol {
+			background: #f3eeff;
+			border-color: #9945ff;
+			color: #7122d4;
+			font-weight: 700;
 		}
 
 		.metrics-row {
@@ -409,6 +463,12 @@
 		}
 
 		.two-col {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 18px;
+		}
+
+		.full-tables {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 			gap: 18px;
@@ -667,18 +727,27 @@
 	<div id="btc-panel" class="content">
 		<div class="info-chip">
 			1 USD = <span class="btc-c">85 INR</span> &nbsp;·&nbsp; 1 lot = <span class="btc-c">0.001 BTC</span>
-			&nbsp;·&nbsp;
-			10 lots = <span class="btc-c">0.01 BTC</span> &nbsp;·&nbsp; 100 pts = <span class="btc-c">$1 P&amp;L per 10
-				lots</span>
+			&nbsp;·&nbsp; 10 lots = <span class="btc-c">0.01 BTC</span> &nbsp;·&nbsp; 100 pts = <span class="btc-c">$1
+				P&amp;L per 10 lots</span>
 		</div>
-		<div class="controls-grid">
+		<div class="controls-single">
 			<div class="control-card">
 				<div class="control-label">Lot Size</div>
 				<div class="control-value-btc" id="b-lot-display">10 <span>lots (0.01 BTC)</span></div>
-				<input type="range" class="btc-range" id="b-lot-slider" min="1" max="13" value="1" step="1"
-					oninput="btcUpdate()">
-				<div class="range-labels">
-					<span>10</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span><span>200</span><span>500</span><span>1000</span>
+				<div class="lot-pills" id="b-lot-pills">
+					<div class="lot-pill active-btc" onclick="btcSetLot(10,this)">10</div>
+					<div class="lot-pill" onclick="btcSetLot(20,this)">20</div>
+					<div class="lot-pill" onclick="btcSetLot(30,this)">30</div>
+					<div class="lot-pill" onclick="btcSetLot(40,this)">40</div>
+					<div class="lot-pill" onclick="btcSetLot(50,this)">50</div>
+					<div class="lot-pill" onclick="btcSetLot(60,this)">60</div>
+					<div class="lot-pill" onclick="btcSetLot(70,this)">70</div>
+					<div class="lot-pill" onclick="btcSetLot(80,this)">80</div>
+					<div class="lot-pill" onclick="btcSetLot(90,this)">90</div>
+					<div class="lot-pill" onclick="btcSetLot(100,this)">100</div>
+					<div class="lot-pill" onclick="btcSetLot(200,this)">200</div>
+					<div class="lot-pill" onclick="btcSetLot(500,this)">500</div>
+					<div class="lot-pill" onclick="btcSetLot(1000,this)">1000</div>
 				</div>
 			</div>
 			<div class="control-card">
@@ -789,18 +858,22 @@
 	<div id="eth-panel" class="content" style="display:none;">
 		<div class="info-chip">
 			1 USD = <span class="eth-c">85 INR</span> &nbsp;·&nbsp; 1 lot = <span class="eth-c">0.01 ETH</span>
-			&nbsp;·&nbsp;
-			10 lots = <span class="eth-c">0.1 ETH</span> &nbsp;·&nbsp; 10 pts = <span class="eth-c">$1 P&amp;L per 10
-				lots</span>
+			&nbsp;·&nbsp; 10 lots = <span class="eth-c">0.1 ETH</span> &nbsp;·&nbsp; 10 pts = <span class="eth-c">$1
+				P&amp;L per 10 lots</span>
 		</div>
-		<div class="controls-grid">
+		<div class="controls-single">
 			<div class="control-card">
 				<div class="control-label">Lot Size</div>
 				<div class="control-value-eth" id="e-lot-display">10 <span>lots (0.1 ETH)</span></div>
-				<input type="range" class="eth-range" id="e-lot-slider" min="1" max="8" value="1" step="1"
-					oninput="ethUpdate()">
-				<div class="range-labels">
-					<span>10</span><span>50</span><span>100</span><span>500</span><span>1k</span><span>2k</span><span>5k</span><span>10k</span>
+				<div class="lot-pills" id="e-lot-pills">
+					<div class="lot-pill active-eth" onclick="ethSetLot(10,this)">10</div>
+					<div class="lot-pill" onclick="ethSetLot(50,this)">50</div>
+					<div class="lot-pill" onclick="ethSetLot(100,this)">100</div>
+					<div class="lot-pill" onclick="ethSetLot(500,this)">500</div>
+					<div class="lot-pill" onclick="ethSetLot(1000,this)">1000</div>
+					<div class="lot-pill" onclick="ethSetLot(2000,this)">2000</div>
+					<div class="lot-pill" onclick="ethSetLot(5000,this)">5000</div>
+					<div class="lot-pill" onclick="ethSetLot(10000,this)">10000</div>
 				</div>
 			</div>
 			<div class="control-card">
@@ -911,17 +984,20 @@
 	<div id="sol-panel" class="content" style="display:none;">
 		<div class="info-chip">
 			1 USD = <span class="sol-c">85 INR</span> &nbsp;·&nbsp; 1 lot = <span class="sol-c">1 SOL</span>
-			&nbsp;·&nbsp; 1
-			pt move = <span class="sol-c">$1 P&amp;L per 1 lot</span>
+			&nbsp;·&nbsp; 1 pt move = <span class="sol-c">$1 P&amp;L per 1 lot</span>
 		</div>
-		<div class="controls-grid">
+		<div class="controls-single">
 			<div class="control-card">
 				<div class="control-label">Lot Size</div>
 				<div class="control-value-sol" id="s-lot-display">1 <span>lot (1 SOL)</span></div>
-				<input type="range" class="sol-range" id="s-lot-slider" min="1" max="7" value="1" step="1"
-					oninput="solUpdate()">
-				<div class="range-labels">
-					<span>1</span><span>5</span><span>10</span><span>50</span><span>100</span><span>500</span><span>1000</span>
+				<div class="lot-pills" id="s-lot-pills">
+					<div class="lot-pill active-sol" onclick="solSetLot(1,this)">1</div>
+					<div class="lot-pill" onclick="solSetLot(5,this)">5</div>
+					<div class="lot-pill" onclick="solSetLot(10,this)">10</div>
+					<div class="lot-pill" onclick="solSetLot(50,this)">50</div>
+					<div class="lot-pill" onclick="solSetLot(100,this)">100</div>
+					<div class="lot-pill" onclick="solSetLot(500,this)">500</div>
+					<div class="lot-pill" onclick="solSetLot(1000,this)">1000</div>
 				</div>
 			</div>
 			<div class="control-card">
@@ -1062,8 +1138,9 @@
 		function btcMargin(lots, lev) { const m = lots / 10; return lev === 25 ? 28 * m : lev === 50 ? 14 * m : 7 * m; }
 		function btcPnL(lots, pts) { return (lots / 10) * (pts / 100); }
 
+		function btcSetLot(l, el) { bLots = l; document.querySelectorAll('#b-lot-pills .lot-pill').forEach(p => p.className = 'lot-pill'); el.className = 'lot-pill active-btc'; btcUpdate(); }
 		function btcUpdate() {
-			bLots = BTC_STEPS[parseInt(document.getElementById('b-lot-slider').value) - 1];
+			// lot set by btcSetLot()
 			document.getElementById('b-lot-display').innerHTML = bLots + ' <span>lots (' + (bLots * 0.001).toFixed(3) + ' BTC)</span>';
 			const mg = btcMargin(bLots, bLev), lo = btcPnL(bLots, bSL), pr = lo * 2, p100 = btcPnL(bLots, 100);
 			document.getElementById('b-m-margin').textContent = fmt(mg);
@@ -1091,8 +1168,9 @@
 		function ethMargin(lots, lev) { const m = lots / 10; return lev === 25 ? 8 * m : lev === 50 ? 4 * m : 2 * m; }
 		function ethPnL(lots, pts) { return (lots / 10) * (pts / 10); }
 
+		function ethSetLot(l, el) { eLots = l; document.querySelectorAll('#e-lot-pills .lot-pill').forEach(p => p.className = 'lot-pill'); el.className = 'lot-pill active-eth'; ethUpdate(); }
 		function ethUpdate() {
-			eLots = ETH_STEPS[parseInt(document.getElementById('e-lot-slider').value) - 1];
+			// lot set by ethSetLot()
 			document.getElementById('e-lot-display').innerHTML = eLots + ' <span>lots (' + (eLots * 0.01).toFixed(2) + ' ETH)</span>';
 			const mg = ethMargin(eLots, eLev), lo = ethPnL(eLots, eSL), pr = lo * 2, p10 = ethPnL(eLots, 10);
 			document.getElementById('e-m-margin').textContent = fmt(mg);
@@ -1121,8 +1199,9 @@
 		function solMargin(lots, lev) { return lev === 25 ? 3 * lots : lev === 50 ? 1.5 * lots : 0.82 * lots; }
 		function solPnL(lots, pts) { return lots * pts; }
 
+		function solSetLot(l, el) { sLots = l; document.querySelectorAll('#s-lot-pills .lot-pill').forEach(p => p.className = 'lot-pill'); el.className = 'lot-pill active-sol'; solUpdate(); }
 		function solUpdate() {
-			sLots = SOL_STEPS[parseInt(document.getElementById('s-lot-slider').value) - 1];
+			// lot set by solSetLot()
 			document.getElementById('s-lot-display').innerHTML = sLots + ' <span>lot' + (sLots > 1 ? 's' : '') + ' (' + sLots + ' SOL)</span>';
 			const mg = solMargin(sLots, sLev), lo = solPnL(sLots, sSL), pr = lo * 2, p1 = solPnL(sLots, 1);
 			document.getElementById('s-m-margin').textContent = fmt(mg);

@@ -69,6 +69,11 @@
 			border-bottom-color: #9945ff;
 		}
 
+		.tab.active-xau {
+			color: #b8860b;
+			border-bottom-color: #b8860b;
+		}
+
 		.tab:not(.active-btc):not(.active-eth):not(.active-sol):hover {
 			color: #444;
 		}
@@ -236,6 +241,13 @@
 			font-weight: 600;
 		}
 
+		.pill.active-xau {
+			background: #fffbea;
+			border-color: #b8860b;
+			color: #856200;
+			font-weight: 600;
+		}
+
 		.leverage-pills {
 			display: flex;
 			gap: 8px;
@@ -295,6 +307,13 @@
 			font-weight: 700;
 		}
 
+		.lot-pill.active-xau {
+			background: #fffbea;
+			border-color: #b8860b;
+			color: #856200;
+			font-weight: 700;
+		}
+
 		.metrics-row {
 			display: grid;
 			grid-template-columns: repeat(4, 1fr);
@@ -347,6 +366,10 @@
 
 		.metric-value.sol-purple {
 			color: #9945ff;
+		}
+
+		.metric-value.xau-gold {
+			color: #b8860b;
 		}
 
 		.metric-sub {
@@ -437,6 +460,14 @@
 			color: #7c3aed;
 		}
 
+		tr.hl-xau td {
+			background: #fffdf0;
+		}
+
+		tr.hl-xau td:first-child {
+			color: #b8860b;
+		}
+
 		.td-green {
 			color: #16a34a !important;
 			font-weight: 600;
@@ -460,6 +491,31 @@
 		.td-solpurple {
 			color: #7c3aed !important;
 			font-weight: 600;
+		}
+
+		.td-xaugold {
+			color: #b8860b !important;
+			font-weight: 600;
+		}
+
+		.info-chip span.xau-c {
+			color: #b8860b;
+			font-weight: 700;
+		}
+
+		.control-value-xau {
+			font-size: 30px;
+			font-weight: 700;
+			color: #b8860b;
+			line-height: 1;
+			margin-bottom: 14px;
+		}
+
+		.control-value-xau span {
+			font-size: 13px;
+			color: #aaa;
+			font-weight: 400;
+			margin-left: 6px;
 		}
 
 		.two-col {
@@ -720,6 +776,7 @@
 			<div class="tab active-btc" id="tab-btc" onclick="showTab('btc')">BTC / USDT</div>
 			<div class="tab" id="tab-eth" onclick="showTab('eth')">ETH / USDT</div>
 			<div class="tab" id="tab-sol" onclick="showTab('sol')">SOL / USDT</div>
+			<div class="tab" id="tab-xau" onclick="showTab('xau')">XAU / USDT</div>
 		</div>
 	</div>
 
@@ -1104,6 +1161,135 @@
 		</div>
 	</div>
 
+	<!-- ═══════════════ XAU PANEL ═══════════════ -->
+	<div id="xau-panel" class="content" style="display:none;">
+		<div class="info-chip">
+			1 USD = <span class="xau-c">85 INR</span> &nbsp;·&nbsp; 10 lots = <span class="xau-c">0.01 XAUT</span>
+			&nbsp;·&nbsp; 1 pt move = <span class="xau-c">$0.01 P&amp;L per 10 lots</span>
+		</div>
+		<div class="controls-single">
+			<div class="control-card">
+				<div class="control-label">Lot Size</div>
+				<div class="control-value-xau" id="x-lot-display">10 <span>lots (0.01 XAUT)</span></div>
+				<div class="lot-pills" id="x-lot-pills">
+					<div class="lot-pill active-xau" onclick="xauSetLot(10,this)">10</div>
+					<div class="lot-pill" onclick="xauSetLot(50,this)">50</div>
+					<div class="lot-pill" onclick="xauSetLot(100,this)">100</div>
+					<div class="lot-pill" onclick="xauSetLot(500,this)">500</div>
+					<div class="lot-pill" onclick="xauSetLot(1000,this)">1000</div>
+					<div class="lot-pill" onclick="xauSetLot(2000,this)">2000</div>
+					<div class="lot-pill" onclick="xauSetLot(3000,this)">3000</div>
+					<div class="lot-pill" onclick="xauSetLot(4000,this)">4000</div>
+					<div class="lot-pill" onclick="xauSetLot(5000,this)">5000</div>
+				</div>
+			</div>
+			<div class="control-card">
+				<div class="control-label">Leverage</div>
+				<div class="leverage-pills" id="x-lev-pills">
+					<div class="pill active-xau" onclick="xauSetLev(10,this)">10x</div>
+					<div class="pill" onclick="xauSetLev(25,this)">25x</div>
+					<div class="pill" onclick="xauSetLev(50,this)">50x</div>
+				</div>
+				<div style="margin-top:14px;">
+					<div class="control-label">Stop Loss Target</div>
+					<div class="sl-pills" id="x-sl-pills">
+						<div class="pill active-xau" onclick="xauSetSL(5,this)">5 pts</div>
+						<div class="pill" onclick="xauSetSL(10,this)">10 pts</div>
+						<div class="pill" onclick="xauSetSL(20,this)">20 pts</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<p class="section-title">Trade Summary</p>
+		<div class="metrics-row">
+			<div class="metric">
+				<div class="metric-label">Margin Required</div>
+				<div class="metric-value xau-gold" id="x-m-margin">—</div>
+				<div class="metric-sub" id="x-m-margin-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Max Loss (SL hit)</div>
+				<div class="metric-value red" id="x-m-loss">—</div>
+				<div class="metric-sub" id="x-m-loss-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Target Profit (1:2 RR)</div>
+				<div class="metric-value green" id="x-m-profit">—</div>
+				<div class="metric-sub" id="x-m-profit-inr">—</div>
+			</div>
+			<div class="metric">
+				<div class="metric-label">Profit per 10 pts</div>
+				<div class="metric-value xau-gold" id="x-m-per10">—</div>
+				<div class="metric-sub" id="x-m-per10-inr">—</div>
+			</div>
+		</div>
+
+		<div class="two-col">
+			<div>
+				<p class="section-title">Lot Size vs Margin (All Leverages)</p>
+				<div class="table-section">
+					<div class="table-scroll">
+						<table>
+							<thead>
+								<tr>
+									<th>Lots</th>
+									<th>XAUT</th>
+									<th>10x ($)</th>
+									<th>25x ($)</th>
+									<th>50x ($)</th>
+								</tr>
+							</thead>
+							<tbody id="x-margin-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div>
+				<p class="section-title">SL / TP at Current Lots</p>
+				<div class="table-section">
+					<div class="table-scroll">
+						<table>
+							<thead>
+								<tr>
+									<th>SL pts</th>
+									<th>Loss ($)</th>
+									<th>Loss (₹)</th>
+									<th>TP ($)</th>
+									<th>TP (₹)</th>
+								</tr>
+							</thead>
+							<tbody id="x-sltp-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="divider"></div>
+		<p class="section-title">Profit / Loss by Point Movement (Current Lots)</p>
+		<div class="table-section">
+			<div class="table-scroll">
+				<table>
+					<thead>
+						<tr>
+							<th>Points</th>
+							<th>P&amp;L ($)</th>
+							<th>P&amp;L (₹)</th>
+							<th>10x Margin</th>
+							<th>ROI 10x</th>
+							<th>25x Margin</th>
+							<th>ROI 25x</th>
+							<th>50x Margin</th>
+							<th>ROI 50x</th>
+						</tr>
+					</thead>
+					<tbody id="x-pnl-table"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
 	<script>
 		const INR = 85;
 
@@ -1126,7 +1312,7 @@
 
 		/* ── TAB ── */
 		function showTab(coin) {
-			['btc', 'eth', 'sol'].forEach(c => {
+			['btc', 'eth', 'sol', 'xau'].forEach(c => {
 				document.getElementById(c + '-panel').style.display = c === coin ? 'block' : 'none';
 				document.getElementById('tab-' + c).className = 'tab' + (c === coin ? ' active-' + c : '');
 			});
@@ -1193,13 +1379,22 @@
 		}
 
 		/* ════ SOL ════ */
-		function solSetLev(l, el) { sLev = l; document.querySelectorAll('#s-lev-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-sol'; solUpdate(); }
-		function solSetSL(s, el) { sSL = s; document.querySelectorAll('#s-sl-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-sol'; solUpdate(); }
+		function solSetLev(l, el) {
+			sLev = l; document.querySelectorAll('#s-lev-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-sol'; solUpdate();
+			xauUpdate();
+		}
+		function solSetSL(s, el) {
+			sSL = s; document.querySelectorAll('#s-sl-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-sol'; solUpdate();
+			xauUpdate();
+		}
 		/* SOL: 1 lot × 1 pt = $1  →  pnl = lots × pts */
 		function solMargin(lots, lev) { return lev === 25 ? 3 * lots : lev === 50 ? 1.5 * lots : 0.82 * lots; }
 		function solPnL(lots, pts) { return lots * pts; }
 
-		function solSetLot(l, el) { sLots = l; document.querySelectorAll('#s-lot-pills .lot-pill').forEach(p => p.className = 'lot-pill'); el.className = 'lot-pill active-sol'; solUpdate(); }
+		function solSetLot(l, el) {
+			sLots = l; document.querySelectorAll('#s-lot-pills .lot-pill').forEach(p => p.className = 'lot-pill'); el.className = 'lot-pill active-sol'; solUpdate();
+			xauUpdate();
+		}
 		function solUpdate() {
 			// lot set by solSetLot()
 			document.getElementById('s-lot-display').innerHTML = sLots + ' <span>lot' + (sLots > 1 ? 's' : '') + ' (' + sLots + ' SOL)</span>';
@@ -1223,10 +1418,47 @@
 			document.getElementById('s-pnl-table').innerHTML = h;
 		}
 
+
+		/* ════ XAU ════ */
+		let xLots = 10, xLev = 10, xSL = 5;
+		const XAU_STEPS = [10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000];
+
+		function xauSetLot(l, el) { xLots = l; document.querySelectorAll('#x-lot-pills .lot-pill').forEach(p => p.className = 'lot-pill'); el.className = 'lot-pill active-xau'; xauUpdate(); }
+		function xauSetLev(l, el) { xLev = l; document.querySelectorAll('#x-lev-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-xau'; xauUpdate(); }
+		function xauSetSL(s, el) { xSL = s; document.querySelectorAll('#x-sl-pills .pill').forEach(p => p.className = 'pill'); el.className = 'pill active-xau'; xauUpdate(); }
+
+		/* XAU: 10 lots × 1 pt = $0.01  →  pnl = (lots/10) * pts * 0.01 */
+		function xauMargin(lots, lev) { const m = lots / 10; return lev === 10 ? 4 * m : lev === 25 ? 2 * m : 1 * m; }
+		function xauPnL(lots, pts) { return (lots / 10) * pts * 0.01; }
+
+		function xauUpdate() {
+			const xautAmt = (xLots * 0.001).toFixed(3);
+			document.getElementById('x-lot-display').innerHTML = xLots + ' <span>lots (' + xautAmt + ' XAUT)</span>';
+			const mg = xauMargin(xLots, xLev), lo = xauPnL(xLots, xSL), pr = lo * 2, p10 = xauPnL(xLots, 10);
+			document.getElementById('x-m-margin').textContent = fmt(mg);
+			document.getElementById('x-m-margin-inr').textContent = fmtINR(mg);
+			document.getElementById('x-m-loss').textContent = '-' + fmt(lo);
+			document.getElementById('x-m-loss-inr').textContent = '-' + fmtINR(lo);
+			document.getElementById('x-m-profit').textContent = '+' + fmt(pr);
+			document.getElementById('x-m-profit-inr').textContent = '+' + fmtINR(pr);
+			document.getElementById('x-m-per10').textContent = fmt(p10);
+			document.getElementById('x-m-per10-inr').textContent = fmtINR(p10);
+			let h = '';
+			XAU_STEPS.forEach(l => { h += `<tr class="${l === xLots ? 'hl-xau' : ''}"><td>${l}</td><td>${(l * 0.001).toFixed(3)}</td><td>${fmt(xauMargin(l, 10))}</td><td>${fmt(xauMargin(l, 25))}</td><td>${fmt(xauMargin(l, 50))}</td></tr>`; });
+			document.getElementById('x-margin-table').innerHTML = h;
+			h = '';
+			[5, 10, 20].forEach(s => { const lo = xauPnL(xLots, s), tp = lo * 2; h += `<tr class="${s === xSL ? 'hl-xau' : ''}"><td>${s}</td><td class="td-red">-${fmt(lo)}</td><td class="td-red">-${fmtINR(lo)}</td><td class="td-green">+${fmt(tp)}</td><td class="td-green">+${fmtINR(tp)}</td></tr>`; });
+			document.getElementById('x-sltp-table').innerHTML = h;
+			h = '';
+			[5, 10, 25, 50, 100, 200].forEach(p => { const pnl = xauPnL(xLots, p), m10 = xauMargin(xLots, 10), m25 = xauMargin(xLots, 25), m50 = xauMargin(xLots, 50); h += `<tr><td>${p} pts</td><td class="td-green">+${fmt(pnl)}</td><td class="td-green">+${fmtINR(pnl)}</td><td>${fmt(m10)}</td><td class="td-xaugold">${pct(pnl / m10)}</td><td>${fmt(m25)}</td><td class="td-xaugold">${pct(pnl / m25)}</td><td>${fmt(m50)}</td><td class="td-xaugold">${pct(pnl / m50)}</td></tr>`; });
+			document.getElementById('x-pnl-table').innerHTML = h;
+		}
+
 		/* init */
 		btcUpdate();
 		ethUpdate();
 		solUpdate();
+		xauUpdate();
 	</script>
 </body>
 
